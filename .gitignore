@@ -40,3 +40,9 @@ build/
 *.pem
 secrets/
 application-local.properties
+
+### Frontend (Next.js) ###
+frontend/node_modules/
+frontend/.next/
+frontend/.vercel/
+frontend/package-lock.json
