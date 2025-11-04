@@ -46,3 +46,20 @@ frontend/node_modules/
 frontend/.next/
 frontend/.vercel/
 frontend/package-lock.json
+
+# Node.js
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Java build
+target/
+
+# Environment
+.env
+*.env
+
+# OS/system files
+.DS_Store
+Thumbs.db

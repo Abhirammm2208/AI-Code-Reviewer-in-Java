@@ -58,8 +58,14 @@ if (Test-Path $envFile) {
     Write-Host "`n[3/3] Starting Spring Boot application..." -ForegroundColor Yellow
     Write-Host "--------------------------------------`n" -ForegroundColor Gray
     
+    # Build Maven arguments with environment variables
+    $mavenArgs = @(
+        "spring-boot:run",
+        "-Dspring-boot.run.jvmArguments=""-DSPRING_DATASOURCE_URL=$([Environment]::GetEnvironmentVariable('SPRING_DATASOURCE_URL', 'Process')) -DSPRING_DATASOURCE_USERNAME=$([Environment]::GetEnvironmentVariable('SPRING_DATASOURCE_USERNAME', 'Process')) -DSPRING_DATASOURCE_PASSWORD=$([Environment]::GetEnvironmentVariable('SPRING_DATASOURCE_PASSWORD', 'Process')) -DGENERATIVE_API_KEY=$([Environment]::GetEnvironmentVariable('GENERATIVE_API_KEY', 'Process')) -DGENERATIVE_MODEL=$([Environment]::GetEnvironmentVariable('GENERATIVE_MODEL', 'Process')) -DAI_PROVIDER=$([Environment]::GetEnvironmentVariable('AI_PROVIDER', 'Process')) -DJWT_SECRET=$([Environment]::GetEnvironmentVariable('JWT_SECRET', 'Process')) -DGOOGLE_CLIENT_ID=$([Environment]::GetEnvironmentVariable('GOOGLE_CLIENT_ID', 'Process')) -DGOOGLE_CLIENT_SECRET=$([Environment]::GetEnvironmentVariable('GOOGLE_CLIENT_SECRET', 'Process'))"""
+    )
+    
     # Run Maven Spring Boot
-    mvn spring-boot:run
+    & mvn $mavenArgs
     
 } else {
     Write-Host "Error: .env file not found!" -ForegroundColor Red
