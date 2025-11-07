@@ -2,11 +2,13 @@ package com.yourorg.aicode.controller;
 
 import com.yourorg.aicode.dto.AuthResponse;
 import com.yourorg.aicode.dto.LoginRequest;
+import com.yourorg.aicode.dto.RefreshTokenRequest;
 import com.yourorg.aicode.dto.RegisterRequest;
 import com.yourorg.aicode.service.AuthService;
 import com.yourorg.aicode.dto.AuthResponse;
 import com.yourorg.aicode.model.User;
 import com.yourorg.aicode.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import jakarta.validation.Valid;
@@ -30,9 +32,10 @@ public class AuthController {
     private UserRepository userRepository;
     
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest, 
+                                     HttpServletRequest request) {
         try {
-            AuthResponse response = authService.register(registerRequest);
+            AuthResponse response = authService.register(registerRequest, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
@@ -42,14 +45,42 @@ public class AuthController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest,
+                                  HttpServletRequest request) {
         try {
-            AuthResponse response = authService.login(loginRequest);
+            AuthResponse response = authService.login(loginRequest, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
             error.put("message", "Invalid email or password");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+    }
+    
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest,
+                                         HttpServletRequest request) {
+        try {
+            AuthResponse response = authService.refreshToken(
+                refreshTokenRequest.getRefreshToken(), request
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+    }
+    
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody(required = false) RefreshTokenRequest refreshTokenRequest) {
+        try {
+            if (refreshTokenRequest != null && refreshTokenRequest.getRefreshToken() != null) {
+                authService.logout(refreshTokenRequest.getRefreshToken());
+            }
+            return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(Map.of("message", "Logged out"));
         }
     }
     

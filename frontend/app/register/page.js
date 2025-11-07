@@ -47,8 +47,17 @@ export default function RegisterPage() {
       newErrors.email = 'Please enter a valid email address';
     }
 
-    if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    // Enhanced password validation
+    if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    } else if (!/(?=.*[a-z])/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one lowercase letter';
+    } else if (!/(?=.*[A-Z])/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one uppercase letter';
+    } else if (!/(?=.*\d)/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one digit';
+    } else if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one special character';
     }
 
     if (formData.password !== formData.confirmPassword) {
@@ -183,7 +192,7 @@ export default function RegisterPage() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Minimum 6 characters"
+              placeholder="Min 8 chars, uppercase, lowercase, digit, special char"
               required
               disabled={loading}
               className={errors.password ? 'error' : ''}
@@ -191,6 +200,9 @@ export default function RegisterPage() {
             {errors.password && (
               <span className="field-error">{errors.password}</span>
             )}
+            <small style={{ color: '#666', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+              Must contain: uppercase, lowercase, digit, special character (!@#$%^&*...)
+            </small>
           </div>
 
           <div className="form-group">

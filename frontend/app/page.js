@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import ProtectedRoute from './components/ProtectedRoute'
 import UserMenu from './components/UserMenu'
+import { Search, AlertTriangle, Lightbulb, CheckCircle2, Code2 } from 'lucide-react'
 
 function IconRocket() {
   return (
@@ -35,7 +36,10 @@ function formatAIResponse(response) {
         {/* Summary Section */}
         {(data.summary || data.comments) && (
           <div className="response-section">
-            <h4 className="section-title">🔍 Analysis Summary</h4>
+            <h4 className="section-title">
+              <Search size={18} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
+              Analysis Summary
+            </h4>
             <p className="section-content">{data.summary || data.comments}</p>
           </div>
         )}
@@ -51,7 +55,10 @@ function formatAIResponse(response) {
         {/* Issues Section */}
         {data.issues && data.issues.length > 0 && (
           <div className="response-section">
-            <h4 className="section-title">⚠️ Main Issues</h4>
+            <h4 className="section-title">
+              <AlertTriangle size={18} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
+              Main Issues
+            </h4>
             <div className="issue-list">
               {data.issues.map((issue, idx) => (
                 <div key={`issue-${idx}`} className="ai-bullet">
@@ -66,7 +73,10 @@ function formatAIResponse(response) {
         {/* Suggestions Section */}
         {data.suggestions && data.suggestions.length > 0 && (
           <div className="response-section">
-            <h4 className="section-title">💡 Suggestions for Improvement</h4>
+            <h4 className="section-title">
+              <Lightbulb size={18} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
+              Suggestions for Improvement
+            </h4>
             <div className="suggestion-list">
               {data.suggestions.map((suggestion, idx) => (
                 <div key={`suggestion-${idx}`} className="ai-bullet">
@@ -81,7 +91,10 @@ function formatAIResponse(response) {
         {/* Best Practices Section */}
         {data.bestPractices && data.bestPractices.length > 0 && (
           <div className="response-section">
-            <h4 className="section-title">✅ Best Practices</h4>
+            <h4 className="section-title">
+              <CheckCircle2 size={18} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
+              Best Practices
+            </h4>
             <div className="practice-list">
               {data.bestPractices.map((practice, idx) => (
                 <div key={`practice-${idx}`} className="ai-bullet">
@@ -96,7 +109,10 @@ function formatAIResponse(response) {
         {/* Fixed Code Section */}
         {data.fixCode && (
           <div className="response-section">
-            <h4 className="section-title">🧠 Improved Version of the Code</h4>
+            <h4 className="section-title">
+              <Code2 size={18} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
+              Improved Version of the Code
+            </h4>
             <pre className="code-block">
               <code>{data.fixCode}</code>
             </pre>

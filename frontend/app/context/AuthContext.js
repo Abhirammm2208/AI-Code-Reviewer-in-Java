@@ -25,11 +25,29 @@ export function AuthProvider({ children }) {
     // Install a global 401 handler
     const interceptorId = axios.interceptors.response.use(
       (resp) => resp,
-      (error) => {
+      async (error) => {
+        const originalRequest = error.config;
+        
+        // If 401 and we haven't tried to refresh yet
+        if (error?.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          
+          try {
+            const newToken = await refreshAccessToken();
+            originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+            return axios(originalRequest);
+          } catch (refreshError) {
+            // Refresh failed, logout
+            logout();
+            return Promise.reject(refreshError);
+          }
+        }
+        
+        // For other errors or if refresh also failed
         if (error?.response?.status === 401) {
-          // Clear state and redirect to login
           logout();
         }
+        
         return Promise.reject(error);
       }
     );
@@ -70,10 +88,14 @@ export function AuthProvider({ children }) {
   // Accepts either { token, user } or { accessToken, user }
   const login = (loginResponse) => {
     const token = loginResponse?.token || loginResponse?.accessToken;
+    const refreshToken = loginResponse?.refreshToken;
     const userInfo = loginResponse?.user || loginResponse;
     if (token) {
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken);
     }
     if (userInfo) {
       localStorage.setItem('user', JSON.stringify(userInfo));
@@ -82,10 +104,43 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    
+    // Call logout endpoint to revoke refresh token
+    if (refreshToken) {
+      axios.post('/api/auth/logout', { refreshToken }).catch(() => {});
+    }
+    
     setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+    delete axios.defaults.headers.common['Authorization'];
     router.push('/login');
+  };
+
+  const refreshAccessToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
+
+      const response = await axios.post('/api/auth/refresh', { refreshToken });
+      const { token, refreshToken: newRefreshToken, user } = response.data;
+
+      localStorage.setItem('token', token);
+      if (newRefreshToken) {
+        localStorage.setItem('refreshToken', newRefreshToken);
+      }
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(user);
+
+      return token;
+    } catch (error) {
+      logout();
+      throw error;
+    }
   };
 
   const value = {
@@ -93,6 +148,7 @@ export function AuthProvider({ children }) {
     loading,
     login,
     logout,
+    refreshAccessToken,
     isAuthenticated: !!user
   };
 
