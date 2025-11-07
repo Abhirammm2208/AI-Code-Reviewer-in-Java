@@ -1,6 +1,5 @@
 package com.yourorg.aicode.controller;
 
-import com.yourorg.aicode.dto.AuthResponse;
 import com.yourorg.aicode.dto.LoginRequest;
 import com.yourorg.aicode.dto.RefreshTokenRequest;
 import com.yourorg.aicode.dto.RegisterRequest;
