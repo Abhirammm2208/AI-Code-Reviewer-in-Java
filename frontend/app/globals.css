@@ -67,7 +67,8 @@ html.dark body {
   height: 56px;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
-  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12)
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12);
+  transition: transform 0.2s ease;
 }
 
 .brand h1 {
