@@ -35,6 +35,10 @@ import com.yourorg.aicode.service.CodeReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for code review endpoints.
+ * Handles code submission and review operations.
+ */
 @RestController
 @RequestMapping("/api/reviews")
 public class CodeReviewController {
