@@ -6,6 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+/**
+ * Scheduled tasks configuration.
+ * Handles periodic cleanup and maintenance operations.
+ */
 @Configuration
 @EnableScheduling
 public class ScheduledTasks {
