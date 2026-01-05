@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Security configuration for the application.
  * Manages authentication, authorization, and OAuth2 configuration.
+ * Includes JWT-based authentication and CORS settings.
  */
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
